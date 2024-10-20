@@ -14,7 +14,7 @@
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, nix-homebrew, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, nix-homebrew, home-manager, ... }:
     let
       configuration = { pkgs, config, ... }: {
         # List packages installed in system profile. To search by name, run:
@@ -27,6 +27,7 @@
           alacritty
           mkalias
           fish
+          fishPlugins.tide
         ];
 
         fonts.packages = [
@@ -71,9 +72,12 @@
           # Existing activation scripts
           ${config.system.activationScripts.applications.text}
 
-          # Wootility installation
-          if [ ! -d "/Applications/Wootility.app" ]; then
-            echo "Downloading and installing Wootility..."
+          # Wootility installation check
+          WOOTILITY_APP="/Applications/wootility-lekker.app"
+          if [ -d "$WOOTILITY_APP" ] && [ -x "$WOOTILITY_APP/Contents/MacOS/wootility-lekker" ]; then
+            echo "Wootility is already installed."
+          else
+            echo "Wootility not found or incomplete. Downloading and installing..."
             curl -L "https://api.wooting.io/public/wootility/download?os=mac&branch=lekker&platform=arm64" -o /tmp/Wootility.dmg
             hdiutil attach /tmp/Wootility.dmg
             VOLUME_INFO=$(hdiutil info | grep -E '/Volumes/.*wootility')
@@ -83,7 +87,7 @@
               APP_PATH=$(find "$VOLUME_PATH" -maxdepth 1 -name "*.app" -print -quit)
               if [ -n "$APP_PATH" ]; then
                 echo "Found app: $APP_PATH"
-                cp -R "$APP_PATH" /Applications/
+                sudo cp -R "$APP_PATH" /Applications/
                 echo "Wootility installed successfully."
               else
                 echo "Error: Could not find Wootility app in the mounted volume."
@@ -108,7 +112,6 @@
         # Create /etc/zshrc that loads the nix-darwin environment.
         # LEAVE ZSH JUST IN CASE SOMETHING BREAKS!!
         programs.zsh.enable = true;  # default shell on catalina
-        programs.fish.enable = true;
         users.users.soak.shell = pkgs.fish;
 
         # Set Git commit hash for darwin-version.
@@ -119,12 +122,42 @@
         nixpkgs.hostPlatform = "aarch64-darwin";
 
         environment.shells = with pkgs; [ fish ];
+
+        # Configure Fish shell with Tide
+        programs.fish = {
+          enable = true;
+          interactiveShellInit = ''
+            if not functions -q tide
+              curl -sL https://git.io/fisher | source && fisher install IlanCosman/tide@v5
+            end
+            set -g tide_prompt_char_glyph '❯'
+            set -g tide_left_prompt_items 'pwd' 'git' 'newline' 'prompt_char'
+            set -g tide_right_prompt_items 'status' 'cmd_duration' 'context' 'jobs' 'virtual_env'
+          '';
+        };
       };
     in
     {
       darwinConfigurations."ghost" = nix-darwin.lib.darwinSystem {
         modules = [ 
           configuration
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.soak = { pkgs, ... }: {
+              home.stateVersion = "24.05";
+              programs.fish = {
+                enable = true;
+                plugins = [
+                  {
+                    name = "tide";
+                    src = pkgs.fishPlugins.tide.src;
+                  }
+                ];
+              };
+            };
+          }
           nix-homebrew.darwinModules.nix-homebrew
           {
             nix-homebrew = {
