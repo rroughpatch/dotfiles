@@ -54,7 +54,7 @@
             modules = [
               home-manager.darwinModules.home-manager
               homeDefaults
-              ./hosts/macbook/system.nix
+              ./hosts/Noelle/system.nix
               {
                 home-manager.users.hylafu = import ./home.nix;
               }
