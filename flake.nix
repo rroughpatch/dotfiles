@@ -1,64 +1,81 @@
+# flake.nix
 {
   description = "yves' nix config";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    systems.url = "github:nix-systems/default";
-
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
-    {
+    inputs@{
       self,
       nixpkgs,
-      systems,
       nix-darwin,
+      flake-parts,
       home-manager,
       ...
     }:
-    let
-      eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
-
-      hmDefaults = {
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          backupFileExtension = "pre-nix-backup";
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [
+        ./modules/formatter.nix
+        inputs.home-manager.flakeModules.home-manager
+      ];
+      systems = [
+        "aarch64-darwin"
+        "x86_64-linux"
+      ];
+      perSystem =
+        {
+          # config,
+          # self',
+          # inputs',
+          # pkgs,
+          # system,
+          ...
+        }:
+        { };
+      flake =
+        let
+          homeDefaults.home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            backupFileExtension = "pre-nix-backup";
+          };
+        in
+        {
+          # MacBook Pro aarch64-darwin
+          darwinConfigurations.Noelle = inputs.nix-darwin.lib.darwinSystem {
+            pkgs = import nixpkgs { system = "aarch64-darwin"; };
+            modules = [
+              home-manager.darwinModules.home-manager
+              ./hosts/macbook/system.nix
+              {
+                home-manager.users.hylafu = import ./home.nix;
+              }
+              homeDefaults
+            ];
+          };
+          # Desktop x86_64-linux
+          # Rosalie =
+          # Nas x86_64-linux
+          # Sable =
+          # Mac Mini aarch64-darwin
+          # Mireille =
         };
-      };
-
-      mkDarwin =
-        modules:
-        nix-darwin.lib.darwinSystem {
-          system = "aarch64-darwin";
-          specialArgs = { inherit self; };
-          modules = [
-            home-manager.darwinModules.home-manager
-            hmDefaults
-          ]
-          ++ modules;
-        };
-    in
-    {
-      formatter = eachSystem (pkgs: pkgs.nixfmt);
-
-      checks = eachSystem (
-        _: eval: {
-          formatting = eval.config.build.check self;
-        }
-      );
-
-      darwinConfigurations = {
-        "hylafus-MacBook-Pro" = mkDarwin [
-          ./hosts/macbook/system.nix
-          { home-manager.users.hylafu = import ./home.nix; }
-        ];
-      };
     };
 }
+# let
+
+# in
+# {
+#   darwinConfigurations."hylafus-MacBook-Pro" = mkDarwin [
+#       ./hosts/macbook/system.nix
+#       { home-manager.users.hylafu = import ./home.nix; }
+#     ];
+#   };
+# };

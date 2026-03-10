@@ -1,3 +1,4 @@
+# hosts/macbook/system.nix
 { pkgs, ... }:
 {
   nix.enable = false;
