@@ -50,14 +50,14 @@
         {
           # MacBook Pro aarch64-darwin
           darwinConfigurations.Noelle = inputs.nix-darwin.lib.darwinSystem {
-            pkgs = import nixpkgs { system = "aarch64-darwin"; };
+            specialArgs = { inherit self; };
             modules = [
               home-manager.darwinModules.home-manager
+              homeDefaults
               ./hosts/macbook/system.nix
               {
                 home-manager.users.hylafu = import ./home.nix;
               }
-              homeDefaults
             ];
           };
           # Desktop x86_64-linux
