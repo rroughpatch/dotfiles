@@ -24,6 +24,7 @@
     rustup
     cmake
     nixd
+    nixfmt
     alejandra
     typescript-go
   ];
@@ -86,7 +87,8 @@
       enable = true;
       enableZshIntegration = true;
       defaultOptions = [
-        "--height" "40%"
+        "--height"
+        "40%"
         "--border"
         "--reverse"
       ];

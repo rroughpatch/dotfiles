@@ -1,37 +1,61 @@
 {
   description = "yves nix config";
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.nix-darwin.url = "github:LnL7/nix-darwin";
+  inputs.nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.systems.url = "github:nix-systems/default";
+  inputs.home-manager.url = "github:nix-community/home-manager";
+  inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
 
-    nix-darwin.url = "github:LnL7/nix-darwin";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+  outputs =
+    {
+      self,
+      nixpkgs,
+      systems,
+      nix-darwin,
+      home-manager,
+      treefmt-nix,
+      ...
+    }:
+    let
+      eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
 
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
-  };
+      hmDefaults = {
+        home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          backupFileExtension = "pre-nix-backup";
+        };
+      };
 
-  outputs = {
-    self,
-    nixpkgs,
-    nix-darwin,
-    hm,
-    ...
-  }: {
-    darwinConfigurations."hylafus-MacBook-Pro" = nix-darwin.lib.darwinSystem {
-      system = "aarch64-darwin";
-      modules = [
-        ./system.nix
-        hm.darwinModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            backupFileExtension = "pre-nix-backup";
-            users.hylafu = import ./home.nix;
-          };
+      mkDarwin =
+        modules:
+        nix-darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
+          specialArgs = { inherit self; };
+          modules = [
+            home-manager.darwinModules.home-manager
+            hmDefaults
+          ]
+          ++ modules;
+        };
+    in
+    {
+      formatter = eachSystem (pkgs: pkgs.nixfmt);
+
+      checks = eachSystem (
+        _: eval: {
+          formatting = eval.config.build.check self;
         }
-      ];
+      );
+
+      darwinConfigurations = {
+        "hylafus-MacBook-Pro" = mkDarwin [
+          ./hosts/macbook/system.nix
+          { home-manager.users.hylafu = import ./home.nix; }
+        ];
+      };
     };
-  };
 }
