@@ -1,10 +1,12 @@
-# home.nix
+# hosts/noelle/home.nix
 { pkgs, ... }:
 
 {
   home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
+    # shared
+
     # Shell tools
     eza
     zoxide
@@ -17,6 +19,7 @@
     jq
     fzf
     delta
+
     # Dev tools
     neovim
     bun

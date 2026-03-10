@@ -54,9 +54,9 @@
             modules = [
               home-manager.darwinModules.home-manager
               homeDefaults
-              ./hosts/Noelle/system.nix
+              ./hosts/noelle/system.nix
               {
-                home-manager.users.hylafu = import ./home.nix;
+                home-manager.users.hylafu = import ./hosts/noelle/home.nix;
               }
             ];
           };
@@ -69,13 +69,3 @@
         };
     };
 }
-# let
-
-# in
-# {
-#   darwinConfigurations."hylafus-MacBook-Pro" = mkDarwin [
-#       ./hosts/macbook/system.nix
-#       { home-manager.users.hylafu = import ./home.nix; }
-#     ];
-#   };
-# };
