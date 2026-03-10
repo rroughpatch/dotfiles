@@ -1,13 +1,17 @@
 {
-  description = "yves nix config";
+  description = "yves' nix config";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.nix-darwin.url = "github:LnL7/nix-darwin";
-  inputs.nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.systems.url = "github:nix-systems/default";
-  inputs.home-manager.url = "github:nix-community/home-manager";
-  inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs";
-  inputs.treefmt-nix.url = "github:numtide/treefmt-nix";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    systems.url = "github:nix-systems/default";
+
+    nix-darwin.url = "github:LnL7/nix-darwin";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+  };
 
   outputs =
     {
@@ -16,7 +20,6 @@
       systems,
       nix-darwin,
       home-manager,
-      treefmt-nix,
       ...
     }:
     let

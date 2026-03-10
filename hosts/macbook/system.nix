@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   nix.enable = false;
   nixpkgs.config.allowUnfree = true;
   programs.zsh.enable = true;
