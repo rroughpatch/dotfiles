@@ -1,6 +1,6 @@
 set shell := ["zsh", "-cu"]
 
-flake := "path:{{justfile_directory()}}"
+flake := "path:" + justfile_directory()
 noelle := flake + "#Noelle"
 rosalie := flake + "#Rosalie"
 
