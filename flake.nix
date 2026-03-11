@@ -1,4 +1,3 @@
-# flake.nix
 {
   description = "yves' nix config";
 
@@ -12,60 +11,18 @@
   };
 
   outputs =
-    inputs@{
-      self,
-      nixpkgs,
-      nix-darwin,
-      flake-parts,
-      home-manager,
-      ...
-    }:
+    inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         ./modules/formatter.nix
         inputs.home-manager.flakeModules.home-manager
       ];
+
       systems = [
         "aarch64-darwin"
         "x86_64-linux"
       ];
-      perSystem =
-        {
-          # config,
-          # self',
-          # inputs',
-          # pkgs,
-          # system,
-          ...
-        }:
-        { };
-      flake =
-        let
-          homeDefaults.home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            backupFileExtension = "pre-nix-backup";
-          };
-        in
-        {
-          # MacBook Pro aarch64-darwin
-          darwinConfigurations.Noelle = inputs.nix-darwin.lib.darwinSystem {
-            specialArgs = { inherit self; };
-            modules = [
-              home-manager.darwinModules.home-manager
-              homeDefaults
-              ./hosts/noelle/system.nix
-              {
-                home-manager.users.hylafu = import ./hosts/noelle/home.nix;
-              }
-            ];
-          };
-          # Desktop x86_64-linux
-          # Rosalie =
-          # Nas x86_64-linux
-          # Sable =
-          # Mac Mini aarch64-darwin
-          # Mireille =
-        };
+
+      flake = import ./flake/outputs.nix { inherit inputs; };
     };
 }
