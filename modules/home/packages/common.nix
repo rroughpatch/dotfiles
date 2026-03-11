@@ -13,6 +13,7 @@
     gh
     gnupg
     jq
+    just
     lazygit
     neovim
     nixd
