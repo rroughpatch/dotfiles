@@ -1,0 +1,30 @@
+{ pkgs, ... }:
+{
+  home.packages = with pkgs; [
+    alejandra
+    bat
+    bun
+    carapace
+    delta
+    eza
+    fastfetch
+    fd
+    fzf
+    gh
+    gnupg
+    jq
+    lazygit
+    neovim
+    nixd
+    nixfmt
+    pay-respects
+    ripgrep
+    starship
+    tldr
+    tmux
+    tree
+    uv
+    yt-dlp
+    zoxide
+  ];
+}
