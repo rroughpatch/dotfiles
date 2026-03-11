@@ -30,7 +30,6 @@
 
       # Tool integrations
       eval "$(pay-respects zsh)"
-      autoload -U compinit && compinit
       zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
       source <(carapace _carapace)
       if command -v ng &> /dev/null; then source <(ng completion script); fi

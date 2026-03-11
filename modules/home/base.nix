@@ -3,6 +3,8 @@
   imports = [
     ./core.nix
     ./packages/common.nix
+    ./programs/atuin.nix
+    ./programs/direnv.nix
     ./programs/git.nix
     ./programs/shell-tools.nix
     ./programs/starship.nix
