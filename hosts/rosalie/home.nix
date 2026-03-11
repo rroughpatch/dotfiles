@@ -255,10 +255,6 @@ in
     zsh = {
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
-      shellAliases = {
-        la = "eza -la --icons";
-        cat = "bat";
-      };
       profileExtra = ''
         if [ -z "$WAYLAND_DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
           exec start-hyprland

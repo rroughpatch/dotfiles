@@ -8,11 +8,13 @@
     };
 
     shellAliases = {
-      ls = "eza $eza_params";
-      l = "eza --all --git-ignore $eza_params";
-      ll = "eza --all --header --long $eza_params";
-      llm = "eza --all --header --long --sort=modified $eza_params";
-      lt = "eza --tree $eza_params";
+      ls = "eza --icons=auto $eza_params";
+      l = "eza --all --git-ignore --icons=auto $eza_params";
+      la = "eza --all --long --icons=auto $eza_params";
+      ll = "eza --all --header --long --icons=auto $eza_params";
+      llm = "eza --all --header --long --sort=modified --icons=auto $eza_params";
+      lt = "eza --tree --icons=auto $eza_params";
+      cat = "bat";
     };
 
     sessionVariables = {
