@@ -1,6 +1,10 @@
 { host, ... }:
 {
-  home.stateVersion = host.homeStateVersion;
+  home = {
+    username = host.username;
+    homeDirectory = host.homeDirectory;
+    stateVersion = host.homeStateVersion;
+  };
 
   programs.home-manager.enable = true;
 }

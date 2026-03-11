@@ -3,7 +3,6 @@ let
   inherit (inputs)
     self
     nixpkgs
-    nix-darwin
     home-manager
     ;
   inherit (nixpkgs) lib;
@@ -18,15 +17,15 @@ let
 
   mkConfiguration =
     _: host:
-    nix-darwin.lib.darwinSystem {
+    lib.nixosSystem {
       system = host.system;
       specialArgs = {
         inherit self inputs host;
       };
       modules = [
-        home-manager.darwinModules.home-manager
+        home-manager.nixosModules.home-manager
         homeDefaults
-        ../modules/darwin/base.nix
+        ../modules/nixos/base.nix
         (host.path + "/system.nix")
         {
           home-manager.extraSpecialArgs = {
@@ -40,6 +39,6 @@ let
       ];
     };
 
-  darwinHosts = lib.filterAttrs (_: host: host.platform == "darwin") hosts;
+  nixosHosts = lib.filterAttrs (_: host: host.platform == "linux") hosts;
 in
-lib.mapAttrs mkConfiguration darwinHosts
+lib.mapAttrs mkConfiguration nixosHosts
