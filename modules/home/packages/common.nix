@@ -1,10 +1,11 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 {
   home.packages = with pkgs; [
     alejandra
     bat
     bun
     carapace
+    inputs.codex-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
     delta
     eza
     fastfetch

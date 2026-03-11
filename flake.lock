@@ -1,5 +1,28 @@
 {
   "nodes": {
+    "codex-nix": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773190718,
+        "narHash": "sha256-d5S6M2aOyb558aFQboIRMhPbo4oPKceLSnLmHH8dyQk=",
+        "owner": "SecBear",
+        "repo": "codex-nix",
+        "rev": "9b16d449d403277a477be1e04f60705f3c6e1143",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SecBear",
+        "repo": "codex-nix",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -91,6 +114,7 @@
     },
     "root": {
       "inputs": {
+        "codex-nix": "codex-nix",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",

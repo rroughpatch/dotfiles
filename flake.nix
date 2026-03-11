@@ -4,6 +4,9 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    codex-nix.url = "github:SecBear/codex-nix";
+    codex-nix.inputs.nixpkgs.follows = "nixpkgs";
+    codex-nix.inputs.flake-parts.follows = "flake-parts";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager.url = "github:nix-community/home-manager";
