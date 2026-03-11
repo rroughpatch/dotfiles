@@ -1,2 +1,3 @@
 bruh.nix
-result/*
+result
+hosts/*/.dotfiles/

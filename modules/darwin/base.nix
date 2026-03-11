@@ -1,13 +1,17 @@
-# hosts/macbook/system.nix
-{ pkgs, ... }:
+{ host, pkgs, ... }:
 {
   nix.enable = false;
-  nixpkgs.config.allowUnfree = true;
+
+  nixpkgs = {
+    config.allowUnfree = true;
+    hostPlatform = host.system;
+  };
+
   programs.zsh.enable = true;
-  nixpkgs.hostPlatform = "aarch64-darwin";
-  users.users.hylafu = {
-    name = "hylafu";
-    home = "/Users/hylafu";
+
+  users.users.${host.username} = {
+    name = host.username;
+    home = host.homeDirectory;
   };
 
   environment.systemPackages = with pkgs; [
@@ -17,9 +21,10 @@
   ];
 
   security.pam.services.sudo_local.touchIdAuth = true;
+
   system = {
-    primaryUser = "hylafu";
-    stateVersion = 6;
+    primaryUser = host.username;
+    stateVersion = host.darwinStateVersion;
     defaults = {
       dock.autohide = true;
       finder.AppleShowAllExtensions = true;
